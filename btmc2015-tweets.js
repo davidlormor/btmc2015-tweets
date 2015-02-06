@@ -5,7 +5,7 @@ if (Meteor.isClient) {
     tweets: function(){
       return Tweets.find({}, {sort: {tweetedAt: -1}});
     },
-    tweetsCount: function(){
+    mentions: function(){
       return Tweets.find({}).count();
     }
   });
