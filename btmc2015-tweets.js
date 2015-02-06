@@ -15,26 +15,23 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
     var Twit = Meteor.npmRequire('twit');
-    var consumerKey = process.env.TWITTER_CONSUMER_KEY;
-    var consumerSecret = process.env.TWITTER_CONSUMER_SECRET;
-    var accessToken = process.env.TWITTER_ACCESS_TOKEN;
-    var accessTokenSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET;
-    console.log(consumerKey);
+    var twitterSettings = Meteor.settings.twitter;
+    console.log(twitterSettings.consumerKey);
 
     var T = new Twit({
-        consumer_key:         consumerKey, // API key
-        consumer_secret:      consumerSecret, // API secret
-        access_token:         accessToken, 
-        access_token_secret:  accessTokenSecret
+        consumer_key:         twitterSettings.consumerKey,
+        consumer_secret:      twitterSettings.consumerSecret,
+        access_token:         twitterSettings.accessToken, 
+        access_token_secret:  twitterSettings.accessTokenSecret
     });
 
-    // subscribe to #BTMC2015 stream in Montgomery
-    var montgomery = ['-87.2', '31.58', '-85.19', '33.05']
+    // subscribe to #BTMC2015 stream
     var stream = T.stream('statuses/filter', { track: '#btmc2015', language: 'en' });
 
+    // save tweets to #BTMC2015 - id, created_at, text, user.id, user.name, user.screen_name
     stream.on('tweet', Meteor.bindEnvironment(function (tweet) {
       console.log('new tweet: ' + tweet.id);
-      // save tweet data - id, created_at, text, user.id, user.name, user.screen_name
+      
       Tweets.insert({
         tweetId: tweet.id,
         tweetedAt: tweet.created_at,

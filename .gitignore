@@ -1,0 +1,2 @@
+# Don't share sensitive data in settings.json
+/settings.json
