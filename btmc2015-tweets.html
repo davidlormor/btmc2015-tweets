@@ -1,14 +1,24 @@
 <head>
-  <title>btmc2015-tweets</title>
+  <title>Better Together Tweets</title>
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
-
-  {{> hello}}
+  <div class="container">
+    <header>
+      <h1>Tweets to #BTMC2015</h1>
+      <h2>{{tweetsCount}} tweets and counting...</h2>
+    </header>
+    <ul>
+      {{#each tweets}}
+        {{> tweet}}
+      {{/each}}
+    </ul>
+  </div>
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="tweet">
+  <li>
+    <h3>{{userName}} (@{{userScreenName}})</h3>
+    <p>&ldquo;{{text}}&rdquo</p>
+  </li>
 </template>
