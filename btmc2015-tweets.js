@@ -26,7 +26,7 @@ if (Meteor.isServer) {
     });
 
     // subscribe to #BTMC2015 stream
-    var stream = T.stream('statuses/filter', { track: '#btmc2015', language: 'en' });
+    var stream = T.stream('statuses/filter', { track: '#btmc15', language: 'en' });
 
     // save tweets to #BTMC2015 - id, created_at, text, user.id, user.name, user.screen_name
     stream.on('tweet', Meteor.bindEnvironment(function (tweet) {
