@@ -5,12 +5,12 @@
 <body>
   <div class="jumbotron tweet-count">
     <div class="container">
-      {{#if winnerExists}}
-        <h1>{{winnerText}}</h1>
-      {{/if}}
       <h1><span class="mentions">{{mentions}}</span> mentions and counting...</h1>
       <h2>Tweet to #BTMC15 for a chance to win a special date night!</h2>
       <button id="get-winner">Draw a winner</button>
+      {{#if winnerExists}}
+        <h1 class='winner'>{{winnerText}}</h1>
+      {{/if}}
     </div>
   </div>
 </body>

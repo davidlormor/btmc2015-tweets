@@ -21,15 +21,51 @@ if (Meteor.isClient) {
   });
   Template.body.events({
     "click #get-winner": function(e) {
-      var random = Math.floor(Math.random() * Tweets.find({}).count());
-      var tweets = Tweets.find().fetch();
-      Session.set("winner", tweets[random])
+      var winner;
+      function getNewWinner(){
+        var random = Math.floor(Math.random() * Tweets.find({}).count());
+        var tweets = Tweets.find().fetch();
+        winner = tweets[random];
+        setWinner();
+      }
+      function setWinner() {
+        if(winner.userScreenName !== 'btmarriage15') {
+          Session.set("winner", winner);
+        } else {
+          getNewWinner();
+        }
+      }
+      getNewWinner();
     }
   });
 }
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
+    // Collect all prior Instagrams
+    var baseUrl = "https://api.instagram.com/v1/tags/btmc15/media/recent?access_token=";
+    var instagramsUrl = baseUrl + Meteor.settings.instagram.accessToken;
+    function retrieveInstagrams(url){
+      HTTP.get(url, function(err, res) {
+        var posts = res.data;
+        posts.data.forEach(function(post){
+          Tweets.insert({
+            tweetId: post.id,
+            tweetedAt: post.created_time,
+            text: post.caption.text,
+            userId: post.user.id,
+            userName: post.user.full_name,
+            userScreenName: post.user.username,
+          });
+        });
+        if(posts.pagination.next_url) {
+          retrieveInstagrams(posts.pagination.next_url);
+        }
+      });
+    }
+    retrieveInstagrams(instagramsUrl);
+    
+    // Endpoint to get Instagrams from Zapier
     Router.route('/api/instagram/posts', {where: 'server'})
       .post(function () {
         var post = this.request.body;
@@ -42,7 +78,9 @@ if (Meteor.isServer) {
           userName: post.userName,
           userScreenName: post.userScreenName
         });
+        this.response.end('{"success" : "Updated Successfully", "status" : 200}');
       });
+    
     // access twitter using the twit package
     var Twit = Meteor.npmRequire('twit');
     var twitterSettings = Meteor.settings.twitter;
