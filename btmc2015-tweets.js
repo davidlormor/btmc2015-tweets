@@ -1,19 +1,49 @@
 Tweets = new Mongo.Collection("tweets");
 
 if (Meteor.isClient) {
+  Router.route('/', function () {
+    this.render('home');
+  });
   Template.body.helpers({
     tweets: function(){
       return Tweets.find({}, {sort: {tweetedAt: -1}});
     },
     mentions: function(){
       return Tweets.find({}).count();
+    },
+    winnerExists: function() {
+      return Session.get('winner');
+    },
+    winnerText: function() {
+      var winner = Session.get('winner');
+      return winner.userName + '(@' + winner.userScreenName + '): ' + winner.text;
+    }
+  });
+  Template.body.events({
+    "click #get-winner": function(e) {
+      var random = Math.floor(Math.random() * Tweets.find({}).count());
+      var tweets = Tweets.find().fetch();
+      Session.set("winner", tweets[random])
     }
   });
 }
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    // code to run on server at startup
+    Router.route('/api/instagram/posts', {where: 'server'})
+      .post(function () {
+        var post = this.request.body;
+        console.log('new instagram: ' + post.tweetId);
+        Tweets.insert({
+          tweetId: post.tweetId,
+          tweetedAt: post.tweetedAt,
+          text: post.text,
+          userId: post.userId,
+          userName: post.userName,
+          userScreenName: post.userScreenName
+        });
+      });
+    // access twitter using the twit package
     var Twit = Meteor.npmRequire('twit');
     var twitterSettings = Meteor.settings.twitter;
     console.log(twitterSettings.consumerKey);

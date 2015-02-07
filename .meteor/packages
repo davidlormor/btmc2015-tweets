@@ -11,4 +11,5 @@ meteorhacks:npm
 
 npm-container
 mrt:bootstrap-3
-nimble:restivus
+http
+iron:router
