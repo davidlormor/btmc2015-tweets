@@ -27,3 +27,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00f4f4f4', e
   font-weight: 400;
   color: #e65825;
 }
+.mentions {
+  background-color: black;
+  color: #f7f7f7;
+  padding: 10px;
+  border-radius: 5px;
+}
